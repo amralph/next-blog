@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import ConfigureAmplifyClientSide from '@/app/amplify-cognito-config';
 
 export const metadata: Metadata = {
   title: 'Next Blog',
@@ -15,10 +14,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body>
-        <>
-          <ConfigureAmplifyClientSide />
-          {children}
-        </>
+        <>{children}</>
       </body>
     </html>
   );
