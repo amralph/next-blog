@@ -1,5 +1,9 @@
-import Image from 'next/image';
+import { DisplayName } from '@/components/display/DisplayName';
 
 export default function Home() {
-  return <div></div>;
+  return (
+    <div>
+      <DisplayName />
+    </div>
+  );
 }
