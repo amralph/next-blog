@@ -1,13 +1,19 @@
+'use client';
 import React from 'react';
-import { SignInButton } from '@/components/buttons/SignInButton';
-import { SignUpButton } from '@/components/buttons/SignUpButton';
-import { SignOutButton } from '@/components/buttons/SignOutButton';
+import {
+  SignInButton,
+  SignUpButton,
+  SignOutButton,
+} from '@/components/buttons/AuthButtons';
+import { useUser } from '@auth0/nextjs-auth0/client';
 
 export const NavBar = () => {
+  const { user } = useUser();
+
   return (
     <>
       <div className='bg-amber-400 w-full h-14 flex justify-center items-center p-4'>
-        {false ? (
+        {user ? (
           <div className='w-full h-full flex justify-between items-center'>
             <SignOutButton />
           </div>
@@ -15,7 +21,6 @@ export const NavBar = () => {
           <div className='w-full h-full flex justify-between items-center'>
             <SignInButton />
             <SignUpButton />
-            <SignOutButton />
           </div>
         )}
       </div>
