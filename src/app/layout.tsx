@@ -18,7 +18,6 @@ export default function RootLayout({
       <UserProvider>
         <body>
           <NavBar></NavBar>
-
           {children}
         </body>
       </UserProvider>

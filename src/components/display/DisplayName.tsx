@@ -4,6 +4,5 @@ import React from 'react';
 
 export const DisplayName = () => {
   const { user } = useUser();
-  console.log(user);
   return <div>{user?.nickname}</div>;
 };

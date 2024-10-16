@@ -8,11 +8,12 @@ export const GET = handleAuth({
     },
   }),
   signup: handleLogin({
+    // put user in dynamodb in auth0 dashboard
     authorizationParams: {
       screen_hint: 'signup',
       prompt: 'login',
     },
-    returnTo: '/home',
+    returnTo: '/profile',
   }),
   logout: handleLogout({
     returnTo: '/',

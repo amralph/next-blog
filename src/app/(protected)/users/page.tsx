@@ -4,7 +4,7 @@ import React from 'react';
 const ChildComponent: React.FC = async () => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/dynamodb/users`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/dynamodb/users/getUsers`
     );
 
     const users = await res.json();
