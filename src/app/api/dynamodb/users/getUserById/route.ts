@@ -4,16 +4,16 @@ import { GetCommand } from '@aws-sdk/lib-dynamodb';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const userID = searchParams.get('userID');
+  const userId = searchParams.get('userId');
 
-  if (!userID) {
-    return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+  if (!userId) {
+    return NextResponse.json({ error: 'User Id is required' }, { status: 400 });
   }
 
   const params = {
     TableName: 'users', // Ensure this matches your DynamoDB table name
     Key: {
-      userID: userID,
+      userId: userId,
     },
   };
 

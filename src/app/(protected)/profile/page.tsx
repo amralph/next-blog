@@ -2,7 +2,7 @@ import React from 'react';
 import { getSession } from '@auth0/nextjs-auth0';
 // not public, settings page
 
-const ChildComponent: React.FC = async () => {
+const ProfilePage = async () => {
   async function updateUser(formData: FormData) {
     'use server';
     const userSession = await getSession();
@@ -51,7 +51,7 @@ const ChildComponent: React.FC = async () => {
   if (userSession) {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/dynamodb/users/getUser?userID=${userSession.user.sub}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/dynamodb/users/getUserById?userId=${userSession.user.sub}`
       );
       userData = await res.json();
     } catch (error) {
@@ -103,4 +103,4 @@ const ChildComponent: React.FC = async () => {
   );
 };
 
-export default ChildComponent;
+export default ProfilePage;

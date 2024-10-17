@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import dynamoDb from '@/lib/dynamodb'; // Adjust the path as necessary
+import dynamoDb from '@/lib/dynamodb';
 import { TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 
 export async function POST(req: Request) {
@@ -13,16 +13,16 @@ export async function POST(req: Request) {
           TableName: 'displayNames',
           Item: {
             displayName: displayName,
-            userID: sub,
+            displayNameLower: displayName.toLowerCase(),
+            userId: sub,
           },
-          ConditionExpression: 'attribute_not_exists(displayName)', // Ensures displayName is unique
         },
       },
       {
         Update: {
           TableName: 'users',
           Key: {
-            userID: sub,
+            userId: sub,
           },
           UpdateExpression:
             'SET displayName = :displayName, birthday = :birthday, bio = :bio',
@@ -43,6 +43,7 @@ export async function POST(req: Request) {
         TableName: 'displayNames',
         Key: {
           displayName: oldDisplayName,
+          displayNameLower: oldDisplayName.toLowerCase(),
         },
       },
     });
