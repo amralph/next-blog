@@ -13,6 +13,7 @@ const ChildComponent: React.FC = async () => {
         displayName: formData.get('displayName'),
         birthday: formData.get('birthday'),
         bio: formData.get('bio'),
+        oldDisplayName: formData.get('oldDisplayName'),
       };
 
       const profileData = {
@@ -53,7 +54,6 @@ const ChildComponent: React.FC = async () => {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/dynamodb/users/getUser?userID=${userSession.user.sub}`
       );
       userData = await res.json();
-      console.log(userData);
     } catch (error) {
       console.log(error);
     }
@@ -69,6 +69,14 @@ const ChildComponent: React.FC = async () => {
             id='displayName'
             name='displayName'
             defaultValue={userData.displayName || ''}
+          />
+          <input
+            type='text'
+            id='oldDisplayName'
+            name='oldDisplayName'
+            hidden
+            readOnly
+            value={userData.displayName}
           />
         </div>
         <div>

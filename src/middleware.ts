@@ -9,6 +9,8 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL('/api/auth/signin', req.url));
   }
 
+  // redirect user to /onboard if user does not have a displayName
+
   return res;
 }
 
