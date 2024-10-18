@@ -28,11 +28,14 @@ export default async function RootLayout({
     }
   }
 
+  // looks like i'm going to be using userData in a lot of parts of the application.
+  // we might need to create a provider for this...
+
   return (
     <html lang='en'>
       <body>
         <NavBar userData={userData}></NavBar>
-        {children}
+        <div className='p-4'>{children}</div>
       </body>
     </html>
   );

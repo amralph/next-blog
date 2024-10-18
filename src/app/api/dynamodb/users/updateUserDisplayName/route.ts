@@ -3,7 +3,15 @@ import dynamoDb from '@/lib/dynamodb';
 import { TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 
 export async function POST(req: Request) {
-  const { sub, displayName, birthday, bio, oldDisplayName } = await req.json();
+  const { sub, displayName, oldDisplayName } = await req.json();
+
+  const displayNameRegex = /^[a-zA-Z0-9]+$/;
+
+  if (!displayNameRegex.test(displayName)) {
+    return NextResponse.json('Error', {
+      status: 400,
+    });
+  }
 
   // Define the transaction with optional Delete operation if oldDisplayName exists
   const transactParams = {
@@ -24,12 +32,9 @@ export async function POST(req: Request) {
           Key: {
             userId: sub,
           },
-          UpdateExpression:
-            'SET displayName = :displayName, birthday = :birthday, bio = :bio',
+          UpdateExpression: 'SET displayName = :displayName',
           ExpressionAttributeValues: {
             ':displayName': displayName,
-            ':birthday': birthday,
-            ':bio': bio,
           },
         },
       },
@@ -66,7 +71,7 @@ export async function POST(req: Request) {
 
     console.error('Transaction failed:', error);
     return NextResponse.json(
-      { error: 'Failed to update user and register display name' },
+      { error: 'Failed to register display name' },
       { status: 500 }
     );
   }

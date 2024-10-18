@@ -23,9 +23,9 @@ const UserPage = async ({ params }: { params: { user: string } }) => {
 
   return (
     <div>
-      <div>{userData.displayName}</div>
+      <div className='text-2xl'>{userData.displayName}</div>
       <div>{userData.bio}</div>
-      <div>{userData.birthday}</div>
+      <div className='text-xs'>Born on {userData.birthday}</div>
     </div>
   );
 };
