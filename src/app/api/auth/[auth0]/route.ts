@@ -13,7 +13,7 @@ export const GET = handleAuth({
       screen_hint: 'signup',
       prompt: 'login',
     },
-    returnTo: '/profile',
+    returnTo: '/settings',
   }),
   logout: handleLogout({
     returnTo: '/',
