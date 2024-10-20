@@ -28,7 +28,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       if (user) {
         try {
           const res = await fetch(
-            `/api/dynamodb/users/getUserById?userId=${user.sub}`
+            `/api/aws/dynamodb/users/getUserById?userId=${user.sub}`
           );
           const data = await res.json();
           setUserData(data);

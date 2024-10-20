@@ -13,7 +13,7 @@ const UserPage = async ({ params }: { params: { user: string } }) => {
   if (userSession) {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/dynamodb/users/getUserByDisplayName?displayName=${params.user}`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/aws/dynamodb/users/getUserByDisplayName?displayName=${params.user}`
       );
       userData = await res.json();
     } catch (error) {

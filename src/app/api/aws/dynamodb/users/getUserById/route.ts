@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server';
-import dynamoDb from '@/lib/dynamodb'; // Adjust the path as necessary
+import dynamoDb from '@/lib/aws/dynamodb'; // Adjust the path as necessary
 import { GetCommand } from '@aws-sdk/lib-dynamodb';
 
 export async function GET(request: NextRequest) {

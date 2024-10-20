@@ -20,7 +20,7 @@ export async function updateUserDisplayName(formData: FormData) {
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/dynamodb/users/updateUserDisplayName`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/aws/dynamodb/users/updateUserDisplayName`,
         {
           method: 'POST',
           headers: {
@@ -65,7 +65,7 @@ export async function updateUserProfile(formData: FormData) {
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/dynamodb/users/updateUserProfile`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/aws/dynamodb/users/updateUserProfile`,
         {
           method: 'POST',
           headers: {

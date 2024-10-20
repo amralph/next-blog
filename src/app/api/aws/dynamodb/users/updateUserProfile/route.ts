@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import dynamoDb from '@/lib/dynamodb';
+import dynamoDb from '@/lib/aws/dynamodb';
 import { TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 
 export async function POST(req: Request) {
