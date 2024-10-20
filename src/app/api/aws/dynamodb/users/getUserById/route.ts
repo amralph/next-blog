@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server';
-import dynamoDb from '@/lib/aws/dynamodb'; // Adjust the path as necessary
+import dynamoDb from '@/lib/aws/dynamodb';
 import { GetCommand } from '@aws-sdk/lib-dynamodb';
 
 export async function GET(request: NextRequest) {
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   }
 
   const params = {
-    TableName: 'users', // Ensure this matches your DynamoDB table name
+    TableName: 'users',
     Key: {
       userId: userId,
     },
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const command = new GetCommand(params);
-    const userData = await dynamoDb.send(command); // Use the send method with the command
+    const userData = await dynamoDb.send(command);
 
     if (!userData.Item) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -33,6 +33,7 @@ export async function GET(request: NextRequest) {
           email: userData.Item.email,
           bio: userData.Item.bio,
           birthday: userData.Item.birthday,
+          profilePictureUrl: userData.Item.profilePictureUrl,
         },
         { status: 200, statusText: 'OK' }
       ); // Return the users as a JSON response

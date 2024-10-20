@@ -1,16 +1,43 @@
 'use client';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useUser } from '@/context/UserContext';
-import { updateUserDisplayName, updateUserProfile } from './actions';
+import {
+  updateUserDisplayName,
+  updateUserProfile,
+  updateUserProfilePicture,
+} from './actions';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 // not public, settings page
 
 const ProfilePage = () => {
   const { userData, setUserData } = useUser();
   const { toast } = useToast();
+
+  useEffect(() => {
+    console.log(userData?.profilePictureUrl);
+  }, [userData]);
+
+  const [profilePicture, setProfilePicture] = useState<File | null>(null);
+  const profilePictureUrl = profilePicture
+    ? URL.createObjectURL(profilePicture)
+    : '';
+
+  const handleUploadUserProfilePicture = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files?.[0]) {
+      setProfilePicture(event.target.files[0]);
+    }
+  };
+
+  async function handleUpdateUserProfilePicture(formData: FormData) {
+    console.log(formData.get('profilePicture'));
+    const updatedUserProfilePicture = updateUserProfilePicture(formData);
+  }
 
   async function handleUpdateUserDisplayName(formData: FormData) {
     const updatedUserData = updateUserDisplayName(formData);
@@ -54,6 +81,30 @@ const ProfilePage = () => {
     <div className='space-y-4'>
       <div>
         <h1>Profile Settings</h1>
+      </div>
+      <div className='bg-orange-200 p-4 rounded-lg'>
+        <form action={handleUpdateUserProfilePicture}>
+          <div className='space-y-2'>
+            <div className='space-y-2'>
+              <label>Profile picture</label>
+              <Avatar>
+                <AvatarImage src={userData?.profilePictureUrl}></AvatarImage>
+                <AvatarFallback>
+                  {userData?.displayName?.[0].toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <Input
+                type='file'
+                id='profilePicture'
+                name='profilePicture'
+                accept='.png, .jpg, .jpeg'
+                className='bg-white'
+                onChange={handleUploadUserProfilePicture}
+              />
+            </div>
+            <Button type='submit'>Upload profile picture</Button>
+          </div>
+        </form>
       </div>
       <div className='bg-orange-200 p-4 rounded-lg'>
         <form action={handleUpdateUserDisplayName}>

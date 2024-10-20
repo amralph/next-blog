@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server';
-import dynamoDb from '@/lib/aws/dynamodb'; // Adjust the path as necessary
+import dynamoDb from '@/lib/aws/dynamodb';
 import { GetCommand } from '@aws-sdk/lib-dynamodb';
 
 export async function GET(request: NextRequest) {
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   }
 
   const displayNameParams = {
-    TableName: 'displayNames', // Ensure this matches your DynamoDB table name
+    TableName: 'displayNames',
     Key: {
       displayName: displayName,
       displayNameLower: displayName.toLowerCase(),
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
   };
   try {
     const displayNameCommand = new GetCommand(displayNameParams);
-    const displayNameData = await dynamoDb.send(displayNameCommand); // Use the send method with the command
+    const displayNameData = await dynamoDb.send(displayNameCommand);
 
     if (!displayNameData.Item) {
       return NextResponse.json(
@@ -31,10 +31,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Now we have the userId from the displayNames table
     const userId = displayNameData.Item.userId;
 
-    // Now query the users table using the userId
     const userParams = {
       TableName: 'users',
       Key: {
@@ -54,6 +52,7 @@ export async function GET(request: NextRequest) {
           email: userData.Item.email,
           bio: userData.Item.bio,
           birthday: userData.Item.birthday,
+          profilePictureUrl: userData.Item.profilePictureUrl,
         },
         { status: 200, statusText: 'OK' }
       );

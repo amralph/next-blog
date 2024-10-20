@@ -5,7 +5,6 @@ import { TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 export async function POST(req: Request) {
   const { sub, birthday, bio } = await req.json();
 
-  // Define the transaction with optional Delete operation if oldDisplayName exists
   const transactParams = {
     TransactItems: [
       {

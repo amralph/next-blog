@@ -88,3 +88,46 @@ export async function updateUserProfile(formData: FormData) {
     return { success: false, message: 'Could not get user session' };
   }
 }
+
+export async function updateUserProfilePicture(formData: FormData) {
+  'use server';
+  const userSession = await getSession();
+
+  if (userSession) {
+    const sub = userSession.user.sub;
+    const profilePicture = formData.get('profilePicture');
+
+    if (profilePicture) {
+      const newFormData = new FormData();
+      newFormData.append('userId', sub);
+      newFormData.append('file', profilePicture);
+      newFormData.append('folder', 'profile-pictures');
+
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/aws/s3/uploadUserProfilePicture`,
+          {
+            method: 'POST',
+            body: newFormData,
+          }
+        );
+        if (res.ok) {
+          return { success: true };
+        } else {
+          return { success: false, message: res.statusText };
+        }
+      } catch (error) {
+        console.log(error);
+        return { success: false, message: error };
+      }
+    } else {
+      console.log('No profile picture');
+      return { success: false, message: 'No profile picture' };
+    }
+
+    // upload file to s3
+  } else {
+    console.log('Could not get user session');
+    return { success: false, message: 'Could not get user session' };
+  }
+}
