@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 import { useUser } from '@/context/UserContext';
 import { updateUserDisplayName, updateUserProfile } from './actions';
 
@@ -9,6 +10,7 @@ import { updateUserDisplayName, updateUserProfile } from './actions';
 
 const ProfilePage = () => {
   const { userData, setUserData } = useUser();
+  const { toast } = useToast();
 
   async function handleUpdateUserDisplayName(formData: FormData) {
     const updatedUserData = updateUserDisplayName(formData);
@@ -18,6 +20,13 @@ const ProfilePage = () => {
         ...userData,
         displayName: formData.get('displayName'),
       }));
+      toast({
+        description: 'DisplayName updated',
+      });
+    } else {
+      toast({
+        description: 'Error changing displayname. Try another name.',
+      });
     }
   }
 
@@ -30,6 +39,14 @@ const ProfilePage = () => {
         bio: formData.get('bio'),
         birthday: formData.get('birthday'),
       }));
+
+      toast({
+        description: 'Profile updated.',
+      });
+    } else {
+      toast({
+        description: 'Error updating profile. Try again later.',
+      });
     }
   }
 
