@@ -62,13 +62,6 @@ export async function POST(req: Request) {
       message: 'User updated successfully and display name registered',
     });
   } catch (error) {
-    if (error.name === 'ConditionalCheckFailedException') {
-      return NextResponse.json(
-        { error: 'Display name is already taken' },
-        { status: 400 }
-      );
-    }
-
     console.error('Transaction failed:', error);
     return NextResponse.json(
       { error: 'Failed to register display name' },
