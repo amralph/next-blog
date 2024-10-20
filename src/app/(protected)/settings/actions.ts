@@ -19,7 +19,7 @@ export async function updateUserDisplayName(formData: FormData) {
     };
 
     try {
-      const a = await fetch(
+      const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/dynamodb/users/updateUserDisplayName`,
         {
           method: 'POST',
@@ -29,12 +29,19 @@ export async function updateUserDisplayName(formData: FormData) {
           body: JSON.stringify(profileData),
         }
       );
-      return 'Success';
+
+      if (res.ok) {
+        return { success: true };
+      } else {
+        return { success: false, message: res.statusText };
+      }
     } catch (error) {
       console.log(error);
+      return { success: false, message: error };
     }
   } else {
     console.log('Could not get user session');
+    return { success: false, message: 'Could not get user session' };
   }
 }
 
@@ -57,7 +64,7 @@ export async function updateUserProfile(formData: FormData) {
     };
 
     try {
-      await fetch(
+      const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/dynamodb/users/updateUserProfile`,
         {
           method: 'POST',
@@ -67,11 +74,17 @@ export async function updateUserProfile(formData: FormData) {
           body: JSON.stringify(profileData),
         }
       );
-      return 'Success';
+      if (res.ok) {
+        return { success: true };
+      } else {
+        return { success: false, message: res.statusText };
+      }
     } catch (error) {
       console.log(error);
+      return { success: false, message: error };
     }
   } else {
     console.log('Could not get user session');
+    return { success: false, message: 'Could not get user session' };
   }
 }

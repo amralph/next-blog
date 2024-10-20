@@ -13,7 +13,7 @@ const ProfilePage = () => {
   async function handleUpdateUserDisplayName(formData: FormData) {
     const updatedUserData = updateUserDisplayName(formData);
     const result = await updatedUserData;
-    if (result === 'Success') {
+    if (result.success) {
       setUserData(() => ({
         ...userData,
         displayName: formData.get('displayName'),
@@ -24,7 +24,7 @@ const ProfilePage = () => {
   async function handleUpdateUserProfile(formData: FormData) {
     const updatedUserData = updateUserProfile(formData);
     const result = await updatedUserData;
-    if (result === 'Success') {
+    if (result.success) {
       setUserData(() => ({
         ...userData,
         bio: formData.get('bio'),
