@@ -8,9 +8,13 @@ export async function POST(req: Request) {
   const displayNameRegex = /^[a-zA-Z0-9]+$/;
 
   if (!displayNameRegex.test(displayName)) {
-    return NextResponse.json('Error', {
-      status: 400,
-    });
+    return NextResponse.json(
+      { error: 'invalid displayName' },
+      {
+        status: 400,
+        statusText: 'invalid displayName',
+      }
+    );
   }
 
   // Define the transaction with optional Delete operation if oldDisplayName exists
@@ -58,14 +62,20 @@ export async function POST(req: Request) {
     // Execute the transaction
     const command = new TransactWriteCommand(transactParams);
     await dynamoDb.send(command);
-    return NextResponse.json({
-      message: 'User updated successfully and display name registered',
-    });
+    return NextResponse.json(
+      {
+        message: 'displayName updated',
+      },
+      {
+        status: 200,
+        statusText: 'displayName updated',
+      }
+    );
   } catch (error) {
     console.error('Transaction failed:', error);
     return NextResponse.json(
       { error: 'Failed to register display name' },
-      { status: 500 }
+      { status: 500, statusText: 'Failed to register display name' }
     );
   }
 }

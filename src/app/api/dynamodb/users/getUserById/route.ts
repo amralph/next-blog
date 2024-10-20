@@ -7,7 +7,10 @@ export async function GET(request: NextRequest) {
   const userId = searchParams.get('userId');
 
   if (!userId) {
-    return NextResponse.json({ error: 'User Id is required' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'userId is required' },
+      { status: 400, statusText: 'userId is required' }
+    );
   }
 
   const params = {
@@ -19,18 +22,26 @@ export async function GET(request: NextRequest) {
 
   try {
     const command = new GetCommand(params);
-    const data = await dynamoDb.send(command); // Use the send method with the command
+    const userData = await dynamoDb.send(command); // Use the send method with the command
 
-    if (!data.Item) {
+    if (!userData.Item) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     } else {
-      return NextResponse.json(data.Item); // Return the users as a JSON response
+      return NextResponse.json(
+        {
+          displayName: userData.Item.displayName,
+          email: userData.Item.email,
+          bio: userData.Item.bio,
+          birthday: userData.Item.birthday,
+        },
+        { status: 200, statusText: 'OK' }
+      ); // Return the users as a JSON response
     }
   } catch (error) {
     console.error('Error fetching users:', error);
     return NextResponse.json(
       { error: 'Failed to fetch users' },
-      { status: 500 }
+      { status: 500, statusText: 'Failed to fetch users' }
     );
   }
 }

@@ -10,12 +10,12 @@ export async function GET() {
   try {
     const command = new ScanCommand(params);
     const data = await dynamoDb.send(command); // Use the send method with the command
-    return NextResponse.json(data.Items); // Return the users as a JSON response
+    return NextResponse.json(data.Items, { status: 200, statusText: 'OK' }); // Return the users as a JSON response
   } catch (error) {
     console.error('Error fetching users:', error);
     return NextResponse.json(
       { error: 'Failed to fetch users' },
-      { status: 500 }
+      { status: 500, statusText: 'Failed to fetch users' }
     );
   }
 }

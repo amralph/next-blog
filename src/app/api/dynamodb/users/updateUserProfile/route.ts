@@ -28,14 +28,17 @@ export async function POST(req: Request) {
     // Execute the transaction
     const command = new TransactWriteCommand(transactParams);
     await dynamoDb.send(command);
-    return NextResponse.json({
-      message: 'User updated successfully and display name registered',
-    });
+    return NextResponse.json(
+      {
+        message: 'user updated',
+      },
+      { status: 200, statusText: 'user updated' }
+    );
   } catch (error) {
     console.error('Transaction failed:', error);
     return NextResponse.json(
       { error: 'Failed to update user' },
-      { status: 500 }
+      { status: 500, statusText: 'Failed to update user' }
     );
   }
 }

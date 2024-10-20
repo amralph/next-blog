@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   if (!displayName) {
     return NextResponse.json(
       { error: 'displayName is required' },
-      { status: 400 }
+      { status: 400, statusText: 'displayName is required' }
     );
   }
 
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     if (!displayNameData.Item) {
       return NextResponse.json(
         { error: 'Display name not found' },
-        { status: 404 }
+        { status: 404, statusText: 'Display name not found' }
       );
     }
 
@@ -48,13 +48,21 @@ export async function GET(request: NextRequest) {
     if (!userData.Item) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     } else {
-      return NextResponse.json(userData.Item); // Return the user details as a JSON response
+      return NextResponse.json(
+        {
+          displayName: userData.Item.displayName,
+          email: userData.Item.email,
+          bio: userData.Item.bio,
+          birthday: userData.Item.birthday,
+        },
+        { status: 200, statusText: 'OK' }
+      );
     }
   } catch (error) {
     console.error('Error fetching users:', error);
     return NextResponse.json(
       { error: 'Failed to fetch user details' },
-      { status: 500 }
+      { status: 500, statusText: 'Failed to fetch user details' }
     );
   }
 }
