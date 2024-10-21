@@ -1,5 +1,6 @@
 import React from 'react';
 import { getSession } from '@auth0/nextjs-auth0';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const UserPage = async ({ params }: { params: { user: string } }) => {
   const userSession = await getSession();
@@ -8,6 +9,7 @@ const UserPage = async ({ params }: { params: { user: string } }) => {
     displayName: '',
     bio: '',
     birthday: '',
+    profilePictureUrl: '',
   };
 
   if (userSession) {
@@ -22,10 +24,20 @@ const UserPage = async ({ params }: { params: { user: string } }) => {
   }
 
   return (
-    <div>
-      <div className='text-2xl'>{userData.displayName}</div>
-      <div>{userData.bio}</div>
-      <div className='text-xs'>Born on {userData.birthday}</div>
+    <div className='flex space-x-4'>
+      <div className='flex justify-center items-center'>
+        <Avatar>
+          <AvatarImage src={userData.profilePictureUrl}></AvatarImage>
+          <AvatarFallback>
+            {userData.displayName?.[0]?.toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+      </div>
+      <div>
+        <div className='text-2xl'>{userData.displayName}</div>
+        <div>{userData.bio}</div>
+        <div className='text-xs'>Born on {userData.birthday}</div>
+      </div>
     </div>
   );
 };
