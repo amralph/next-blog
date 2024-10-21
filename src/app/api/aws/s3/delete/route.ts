@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { message: 'File deleted successfully' },
-      { status: 200, statusText: 'File deleted from S3' }
+      { status: 200, statusText: 'OK' }
     );
   } catch (deleteError) {
     console.error('Error deleting from S3:', deleteError);

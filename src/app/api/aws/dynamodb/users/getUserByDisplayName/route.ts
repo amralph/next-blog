@@ -46,16 +46,10 @@ export async function GET(request: NextRequest) {
     if (!userData.Item) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     } else {
-      return NextResponse.json(
-        {
-          displayName: userData.Item.displayName,
-          email: userData.Item.email,
-          bio: userData.Item.bio,
-          birthday: userData.Item.birthday,
-          profilePictureUrl: userData.Item.profilePictureUrl,
-        },
-        { status: 200, statusText: 'OK' }
-      );
+      return NextResponse.json(userData.Item, {
+        status: 200,
+        statusText: 'OK',
+      });
     }
   } catch (error) {
     console.error('Error fetching users:', error);

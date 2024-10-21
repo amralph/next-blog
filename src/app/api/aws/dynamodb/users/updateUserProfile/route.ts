@@ -31,7 +31,7 @@ export async function POST(req: Request) {
       {
         message: 'user updated',
       },
-      { status: 200, statusText: 'user updated' }
+      { status: 200, statusText: 'OK' }
     );
   } catch (error) {
     console.error('Transaction failed:', error);

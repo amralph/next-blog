@@ -46,9 +46,16 @@ export const NavBar = () => {
               </NavigationMenuList>
             </NavigationMenu>
           </div>
-          <Button asChild variant='link'>
-            <Link href='/api/auth/logout'>Sign Out</Link>
-          </Button>
+          <div>
+            <Button asChild variant='link'>
+              <Link href='/discover'>Discover</Link>
+            </Button>
+          </div>
+          <div>
+            <Button asChild variant='link'>
+              <Link href='/api/auth/logout'>Sign Out</Link>
+            </Button>
+          </div>
         </div>
       ) : (
         <div className='w-full h-full flex justify-between items-center'>

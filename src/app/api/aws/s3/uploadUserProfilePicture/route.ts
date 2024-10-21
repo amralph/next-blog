@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
           message: 'user profile picture updated',
           profilePictureUrl,
         },
-        { status: 200, statusText: 'user profile picture updated' }
+        { status: 200, statusText: 'OK' }
       );
     }
   } catch (error) {
