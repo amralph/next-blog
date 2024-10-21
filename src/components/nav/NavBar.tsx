@@ -3,6 +3,7 @@
 import React from 'react';
 import { useUser } from '@/context/UserContext';
 import Link from 'next/link';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   NavigationMenu,
@@ -20,7 +21,13 @@ export const NavBar = () => {
     <div className='bg-amber-400 w-full h-14 flex justify-center items-center p-4'>
       {userData ? (
         <div className='w-full h-full flex justify-between items-center'>
-          <div className='flex'>
+          <div className='flex space-x-2'>
+            <Avatar>
+              <AvatarImage src={userData?.profilePictureUrl}></AvatarImage>
+              <AvatarFallback>
+                {userData?.displayName?.[0].toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>

@@ -16,18 +16,22 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 const ProfilePage = () => {
   const { userData, setUserData } = useUser();
   const { toast } = useToast();
+  const [settingsProfilePicture, setSettingsProfilePicture] = useState(
+    userData?.profilePictureUrl
+  );
 
   useEffect(() => {
-    console.log(userData?.profilePictureUrl);
-  }, [userData]);
-
-  const [profilePicture, setProfilePicture] = useState<File | null>(null);
+    if (userData?.profilePictureUrl) {
+      setSettingsProfilePicture(userData.profilePictureUrl);
+    }
+  }, [userData?.profilePictureUrl]); // Run this effect when userData.profilePictureUrl changes
 
   const handleUploadUserProfilePicture = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     if (event.target.files?.[0]) {
-      setProfilePicture(event.target.files[0]);
+      const imageUrl = URL.createObjectURL(event.target.files[0]);
+      setSettingsProfilePicture(imageUrl);
     }
   };
 
@@ -42,11 +46,11 @@ const ProfilePage = () => {
         profilePictureUrl: result.profilePictureUrl,
       }));
       toast({
-        description: 'DisplayName updated',
+        description: 'Profile picture updated.',
       });
     } else {
       toast({
-        description: 'Error changing displayname. Try another name.',
+        description: 'Error changing profile picture.',
       });
     }
   }
@@ -60,7 +64,7 @@ const ProfilePage = () => {
         displayName: formData.get('displayName'),
       }));
       toast({
-        description: 'DisplayName updated',
+        description: 'DisplayName updated.',
       });
     } else {
       toast({
@@ -100,7 +104,7 @@ const ProfilePage = () => {
             <div className='space-y-2'>
               <label>Profile picture</label>
               <Avatar>
-                <AvatarImage src={userData?.profilePictureUrl}></AvatarImage>
+                <AvatarImage src={settingsProfilePicture}></AvatarImage>
                 <AvatarFallback>
                   {userData?.displayName?.[0].toUpperCase()}
                 </AvatarFallback>
