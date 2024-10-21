@@ -7,6 +7,7 @@ export async function POST(req: NextRequest) {
 
   const file = formData.get('file') as File;
   const userId = formData.get('userId');
+  const oldProfilePictureUrl = formData.get('oldProfilePictureUrl');
 
   if (!file) {
     return NextResponse.json(
@@ -29,7 +30,8 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const res = await fetch(
+    // upload photo to s3
+    const uploadPictureRes = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/aws/s3/upload`,
       {
         method: 'POST',
@@ -37,13 +39,11 @@ export async function POST(req: NextRequest) {
       }
     );
 
-    if (res.status === 200) {
-      const profilePictureData = await res.json();
-
-      console.log(profilePictureData);
-
+    if (uploadPictureRes.status === 200) {
+      const profilePictureData = await uploadPictureRes.json();
       const profilePictureUrl = profilePictureData.url;
 
+      // update dynamodb user profilePictureUrl attribute
       const transactParams = {
         TransactItems: [
           {
@@ -64,9 +64,23 @@ export async function POST(req: NextRequest) {
       const command = new TransactWriteCommand(transactParams);
       await dynamoDb.send(command);
 
+      if (oldProfilePictureUrl) {
+        // delete old profile photo in s3 bucket if exists
+        await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/aws/s3/delete`,
+          {
+            method: 'POST',
+            body: JSON.stringify({
+              fileUrl: oldProfilePictureUrl,
+            }),
+          }
+        );
+      }
+
       return NextResponse.json(
         {
           message: 'user profile picture updated',
+          profilePictureUrl,
         },
         { status: 200, statusText: 'user profile picture updated' }
       );

@@ -96,12 +96,17 @@ export async function updateUserProfilePicture(formData: FormData) {
   if (userSession) {
     const sub = userSession.user.sub;
     const profilePicture = formData.get('profilePicture');
+    const oldProfilePictureUrl = formData.get('oldProfilePictureUrl');
 
     if (profilePicture) {
       const newFormData = new FormData();
       newFormData.append('userId', sub);
       newFormData.append('file', profilePicture);
       newFormData.append('folder', 'profile-pictures');
+
+      if (oldProfilePictureUrl) {
+        newFormData.append('oldProfilePictureUrl', oldProfilePictureUrl);
+      }
 
       try {
         const res = await fetch(
@@ -111,8 +116,12 @@ export async function updateUserProfilePicture(formData: FormData) {
             body: newFormData,
           }
         );
+
+        const data = await res.json();
+        const profilePictureUrl = data.profilePictureUrl;
+
         if (res.ok) {
-          return { success: true };
+          return { success: true, profilePictureUrl };
         } else {
           return { success: false, message: res.statusText };
         }

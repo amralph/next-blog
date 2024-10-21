@@ -22,9 +22,6 @@ const ProfilePage = () => {
   }, [userData]);
 
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
-  const profilePictureUrl = profilePicture
-    ? URL.createObjectURL(profilePicture)
-    : '';
 
   const handleUploadUserProfilePicture = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -35,8 +32,24 @@ const ProfilePage = () => {
   };
 
   async function handleUpdateUserProfilePicture(formData: FormData) {
-    console.log(formData.get('profilePicture'));
+    console.log('before action', formData.entries());
     const updatedUserProfilePicture = updateUserProfilePicture(formData);
+
+    const result = await updatedUserProfilePicture;
+
+    if (result.success) {
+      setUserData(() => ({
+        ...userData,
+        profilePictureUrl: result.profilePictureUrl,
+      }));
+      toast({
+        description: 'DisplayName updated',
+      });
+    } else {
+      toast({
+        description: 'Error changing displayname. Try another name.',
+      });
+    }
   }
 
   async function handleUpdateUserDisplayName(formData: FormData) {
@@ -100,6 +113,14 @@ const ProfilePage = () => {
                 accept='.png, .jpg, .jpeg'
                 className='bg-white'
                 onChange={handleUploadUserProfilePicture}
+              />
+              <input
+                type='text'
+                id='oldProfilePictureUrl'
+                name='oldProfilePictureUrl'
+                hidden
+                readOnly
+                value={userData?.profilePictureUrl}
               />
             </div>
             <Button type='submit'>Upload profile picture</Button>
