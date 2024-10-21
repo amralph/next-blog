@@ -19,6 +19,7 @@ const ProfilePage = () => {
   const [settingsProfilePicture, setSettingsProfilePicture] = useState(
     userData?.profilePictureUrl
   );
+  const [pictureChosen, setPictureChosen] = useState(false);
 
   useEffect(() => {
     if (userData?.profilePictureUrl) {
@@ -32,6 +33,7 @@ const ProfilePage = () => {
     if (event.target.files?.[0]) {
       const imageUrl = URL.createObjectURL(event.target.files[0]);
       setSettingsProfilePicture(imageUrl);
+      setPictureChosen(true);
     }
   };
 
@@ -126,7 +128,9 @@ const ProfilePage = () => {
                 value={userData?.profilePictureUrl}
               />
             </div>
-            <Button type='submit'>Upload profile picture</Button>
+            <Button type='submit' disabled={!pictureChosen}>
+              Upload profile picture
+            </Button>
           </div>
         </form>
       </div>

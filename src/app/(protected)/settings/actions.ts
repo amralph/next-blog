@@ -104,6 +104,8 @@ export async function updateUserProfilePicture(formData: FormData) {
       newFormData.append('file', profilePicture);
       newFormData.append('folder', 'profile-pictures');
 
+      // scale down file size would be nice
+
       if (oldProfilePictureUrl) {
         newFormData.append('oldProfilePictureUrl', oldProfilePictureUrl);
       }
