@@ -32,7 +32,6 @@ const ProfilePage = () => {
   };
 
   async function handleUpdateUserProfilePicture(formData: FormData) {
-    console.log('before action', formData.entries());
     const updatedUserProfilePicture = updateUserProfilePicture(formData);
 
     const result = await updatedUserProfilePicture;
