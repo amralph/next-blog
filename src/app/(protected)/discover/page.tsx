@@ -84,7 +84,6 @@ const DiscoverPage = async () => {
             },
       };
     });
-    console.log('fp', fullPosts);
   } catch (error) {
     console.log(error);
   }

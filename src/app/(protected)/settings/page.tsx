@@ -9,7 +9,7 @@ import {
   updateUserProfile,
   updateUserProfilePicture,
 } from './actions';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar } from '@/components/avatar/Avatar';
 
 // not public, settings page
 
@@ -105,12 +105,10 @@ const ProfilePage = () => {
           <div className='space-y-2'>
             <div className='space-y-2'>
               <label>Profile picture</label>
-              <Avatar>
-                <AvatarImage src={settingsProfilePicture}></AvatarImage>
-                <AvatarFallback>
-                  {userData?.displayName?.[0].toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
+              <Avatar
+                fallBack={userData.displayName?.[0]?.toUpperCase() || '?'}
+                profilePictureUrl={userData.profilePictureUrl}
+              ></Avatar>
               <Input
                 type='file'
                 id='profilePicture'
