@@ -8,7 +8,7 @@ export const GET = handleAuth({
     },
   }),
   signup: handleLogin({
-    // put user in dynamodb in auth0 dashboard
+    // put user in supabase in auth0 dashboard
     authorizationParams: {
       screen_hint: 'signup',
       prompt: 'login',

@@ -1,129 +1,51 @@
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { getSession } from '@auth0/nextjs-auth0';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
+import { PostForm } from './PostForm';
+import { createClientWithUserSession } from '@/lib/supabase/server';
+import { Post } from '@/components/post/Post';
+import { imageCacheBuster } from '@/lib/utils/imageCacheBuster';
 
 const DiscoverPage = async () => {
-  const createPost = async (formData: FormData) => {
-    'use server';
-    const userSession = await getSession();
+  const supabase = await createClientWithUserSession();
 
-    if (userSession) {
-      const sub = userSession.user.sub;
+  let posts: {
+    content: string;
+    created_at: string;
+    image_url: string;
+    users: { display_name: string; profile_image_url: string } | any;
+  }[] = [];
 
-      const postText = formData.get('postText');
+  if (supabase) {
+    const { data, error } = await supabase
+      .from('posts')
+      .select(
+        'content, created_at, image_url, users (display_name, profile_image_url)'
+      )
+      .order('created_at', { ascending: false });
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/aws/dynamodb/posts/createPost`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ sub, postText }),
-        }
-      );
+    if (data) {
+      posts = data;
     }
-  };
-
-  // load posts
-  let posts: { postText: string; createdAt: number; userId: string }[] = [];
-  let users: {
-    userId: string;
-    displayName: string;
-    email: string;
-    bio: string;
-    birthday: string;
-    profilePictureUrl: string;
-  }[] = [];
-
-  let fullPosts: {
-    postText: string;
-    createdAt: number;
-    userId: string;
-    user: {
-      userId: string;
-      displayName: string;
-      email: string;
-      bio: string;
-      birthday: string;
-      profilePictureUrl: string;
-    };
-  }[] = [];
-
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/aws/dynamodb/posts/getPosts`
-    );
-
-    const data = await res.json();
-
-    posts = data.posts;
-    users = data.users;
-
-    fullPosts = posts.map((post) => {
-      // Find the user corresponding to the post's userId
-
-      const user = users.find((user) => user.userId === post.userId);
-
-      return {
-        ...post,
-        user: user
-          ? {
-              displayName: user.displayName,
-              profilePictureUrl: user.profilePictureUrl,
-            }
-          : {
-              userId: '',
-              displayName: '',
-              email: '',
-              bio: '',
-              birthday: '',
-              profilePictureUrl: '',
-            },
-      };
-    });
-  } catch (error) {
-    console.log(error);
   }
 
   return (
-    <div>
+    <div className='space-y-4'>
       <div className=''>
-        <form action={createPost}>
-          <Input
-            type='text'
-            id='postText'
-            name='postText'
-            className='bg-white'
-          />
-          <Button type='submit'>Post</Button>
-        </form>
+        <PostForm></PostForm>
       </div>
       <div>
         <div className='space-y-2'>
-          {fullPosts.map((fullPost, index) => (
-            <div key={index} className='flex space-x-2'>
-              <div>
-                <Avatar>
-                  <AvatarImage
-                    src={fullPost.user.profilePictureUrl}
-                  ></AvatarImage>
-                  <AvatarFallback>
-                    {fullPost.user.displayName?.[0].toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-              </div>
-              <div>
-                <h1>
-                  <Link href={`/${fullPost.user.displayName}`}>
-                    {fullPost.user.displayName}
-                  </Link>
-                </h1>
-                <p>{fullPost.postText}</p>
-                <p>{fullPost.createdAt}</p>
-              </div>
+          {posts.map((post, index) => (
+            <div key={index}>
+              <Post
+                post={post}
+                userData={{
+                  display_name: post.users.display_name,
+                  profile_image_url: imageCacheBuster(
+                    post.users.profile_image_url
+                  ),
+                }}
+              ></Post>
             </div>
           ))}
         </div>

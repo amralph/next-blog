@@ -13,6 +13,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
+import { imageCacheBuster } from '@/lib/utils/imageCacheBuster';
 
 export const NavBar = () => {
   const { userData } = useUser();
@@ -23,20 +24,22 @@ export const NavBar = () => {
         <div className='w-full h-full flex justify-between items-center'>
           <div className='flex space-x-2'>
             <Avatar>
-              <AvatarImage src={userData?.profilePictureUrl}></AvatarImage>
+              <AvatarImage
+                src={imageCacheBuster(userData?.profile_image_url)}
+              ></AvatarImage>
               <AvatarFallback>
-                {userData?.displayName?.[0].toUpperCase()}
+                {userData?.display_name?.[0].toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger>
-                    {userData.displayName}
+                    {userData.display_name}
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className='grid w-28'>
                     <NavigationMenuLink className='w-28 m-2' asChild>
-                      <Link href={`/${userData.displayName}`}>Profile</Link>
+                      <Link href={`/${userData.display_name}`}>Profile</Link>
                     </NavigationMenuLink>
                     <NavigationMenuLink className='w-28 m-2' asChild>
                       <Link href={`/settings`}>Settings</Link>

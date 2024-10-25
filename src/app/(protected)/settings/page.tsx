@@ -7,63 +7,67 @@ import { useUser } from '@/context/UserContext';
 import {
   updateUserDisplayName,
   updateUserProfile,
-  updateUserProfilePicture,
+  updateUserProfileImage,
 } from './actions';
 import { Avatar } from '@/components/avatar/Avatar';
+import { imageCacheBuster } from '@/lib/utils/imageCacheBuster';
 
 // not public, settings page
 
 const ProfilePage = () => {
   const { userData, setUserData } = useUser();
   const { toast } = useToast();
-  const [settingsProfilePicture, setSettingsProfilePicture] = useState(
-    userData?.profilePictureUrl
+  const [settingsProfileImage, setSettingsProfileImage] = useState(
+    imageCacheBuster(userData?.profile_image_url)
   );
-  const [pictureChosen, setPictureChosen] = useState(false);
+  const [imageChosen, setImageChosen] = useState(false);
 
   useEffect(() => {
-    if (userData?.profilePictureUrl) {
-      setSettingsProfilePicture(userData.profilePictureUrl);
+    if (userData?.profile_image_url) {
+      setSettingsProfileImage(
+        `${imageCacheBuster(userData.profile_image_url)}`
+      );
     }
-  }, [userData?.profilePictureUrl]); // Run this effect when userData.profilePictureUrl changes
+  }, [userData?.profile_image_url]); // Run this effect when userData.profileImageUrl changes
 
-  const handleUploadUserProfilePicture = (
+  const handleUploadUserProfileImage = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     if (event.target.files?.[0]) {
       const imageUrl = URL.createObjectURL(event.target.files[0]);
-      setSettingsProfilePicture(imageUrl);
-      setPictureChosen(true);
+      setSettingsProfileImage(imageUrl);
+      setImageChosen(true);
     }
   };
 
-  async function handleUpdateUserProfilePicture(formData: FormData) {
-    const updatedUserProfilePicture = updateUserProfilePicture(formData);
+  async function handleUpdateUserProfileImage(formData: FormData) {
+    const updatedUserProfileImage = await updateUserProfileImage(formData);
 
-    const result = await updatedUserProfilePicture;
-
-    if (result.success) {
+    if (updatedUserProfileImage.success) {
       setUserData(() => ({
         ...userData,
-        profilePictureUrl: result.profilePictureUrl,
+        profile_image_url: updatedUserProfileImage.profile_image_url
+          ? imageCacheBuster(updatedUserProfileImage.profile_image_url)
+          : '',
       }));
       toast({
-        description: 'Profile picture updated.',
+        description:
+          'Profile image updated. Changes may take some time to become visible.',
       });
     } else {
       toast({
-        description: 'Error changing profile picture.',
+        description: 'Error changing profile image.',
       });
     }
   }
 
   async function handleUpdateUserDisplayName(formData: FormData) {
-    const updatedUserData = updateUserDisplayName(formData);
-    const result = await updatedUserData;
-    if (result.success) {
+    const updatedUserData = await updateUserDisplayName(formData);
+
+    if (updatedUserData.success) {
       setUserData(() => ({
         ...userData,
-        displayName: formData.get('displayName'),
+        display_name: formData.get('displayName'),
       }));
       toast({
         description: 'DisplayName updated.',
@@ -76,9 +80,8 @@ const ProfilePage = () => {
   }
 
   async function handleUpdateUserProfile(formData: FormData) {
-    const updatedUserData = updateUserProfile(formData);
-    const result = await updatedUserData;
-    if (result.success) {
+    const updatedUserData = await updateUserProfile(formData);
+    if (updatedUserData.success) {
       setUserData(() => ({
         ...userData,
         bio: formData.get('bio'),
@@ -101,33 +104,33 @@ const ProfilePage = () => {
         <h1>Profile Settings</h1>
       </div>
       <div className='bg-orange-200 p-4 rounded-lg'>
-        <form action={handleUpdateUserProfilePicture}>
+        <form action={handleUpdateUserProfileImage}>
           <div className='space-y-2'>
             <div className='space-y-2'>
-              <label>Profile picture</label>
+              <label>Profile image</label>
               <Avatar
-                fallBack={userData.displayName?.[0]?.toUpperCase() || '?'}
-                profilePictureUrl={userData.profilePictureUrl}
+                fallBack={userData?.displayName?.[0]?.toUpperCase() || '?'}
+                profileImageUrl={settingsProfileImage}
               ></Avatar>
               <Input
                 type='file'
-                id='profilePicture'
-                name='profilePicture'
+                id='profileImage'
+                name='profileImage'
                 accept='.png, .jpg, .jpeg'
                 className='bg-white'
-                onChange={handleUploadUserProfilePicture}
+                onChange={handleUploadUserProfileImage}
               />
               <input
                 type='text'
-                id='oldProfilePictureUrl'
-                name='oldProfilePictureUrl'
+                id='oldProfileImageUrl'
+                name='oldProfileImageUrl'
                 hidden
                 readOnly
-                value={userData?.profilePictureUrl}
+                value={userData?.profile_image_url}
               />
             </div>
-            <Button type='submit' disabled={!pictureChosen}>
-              Upload profile picture
+            <Button type='submit' disabled={!imageChosen}>
+              Upload profile image
             </Button>
           </div>
         </form>
@@ -141,16 +144,8 @@ const ProfilePage = () => {
                 type='text'
                 id='displayName'
                 name='displayName'
-                defaultValue={userData?.displayName}
+                defaultValue={userData?.display_name}
                 className='bg-white'
-              />
-              <input
-                type='text'
-                id='oldDisplayName'
-                name='oldDisplayName'
-                hidden
-                readOnly
-                value={userData?.displayName}
               />
             </div>
             <Button type='submit'>Change displayname</Button>

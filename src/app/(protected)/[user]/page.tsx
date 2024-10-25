@@ -2,66 +2,69 @@ import React from 'react';
 import { getSession } from '@auth0/nextjs-auth0';
 import { Avatar } from '@/components/avatar/Avatar';
 import { Post } from '@/components/post/Post';
+import { imageCacheBuster } from '@/lib/utils/imageCacheBuster';
+import { createClientWithUserSession } from '@/lib/supabase/server';
 
 const UserPage = async ({ params }: { params: { user: string } }) => {
   const userSession = await getSession();
-
   let userData = {
-    displayName: '',
     bio: '',
     birthday: '',
-    profilePictureUrl: '',
-    userId: '',
+    profile_image_url: '',
   };
-
-  let posts = [];
-
+  let posts: { content: string; created_at: string; image_url: string }[] = [];
   if (userSession) {
-    try {
-      const userDataRes = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/aws/dynamodb/users/getUserByDisplayName?displayName=${params.user}`
-      );
-      userData = await userDataRes.json();
-    } catch (error) {
-      console.log(error);
-    }
+    const supabase = await createClientWithUserSession();
 
-    try {
-      const postsRes = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/aws/dynamodb/posts/getPostsByUserId?userId=${userData.userId}`
-      );
-      posts = (await postsRes.json()).posts;
-    } catch (error) {
-      console.log(error);
+    if (supabase) {
+      // get user by displayName
+      const { data, error } = await supabase
+        .from('users')
+        .select(
+          'bio, birthday, profile_image_url, posts (content, created_at, image_url) '
+        )
+        .eq('display_name', params.user)
+        .order('created_at', { referencedTable: 'posts', ascending: false })
+        .single();
+
+      if (data) {
+        posts = data.posts;
+
+        userData = {
+          bio: data.bio,
+          birthday: data.birthday,
+          profile_image_url: data.profile_image_url,
+        };
+      }
     }
   }
-
   return (
     <div className='flex space-x-4'>
       <div className=''>
         <div className=''>
           <Avatar
-            fallBack={userData.displayName?.[0]?.toUpperCase()}
-            profilePictureUrl={userData.profilePictureUrl}
+            fallBack={params.user?.[0]?.toUpperCase()}
+            profileImageUrl={imageCacheBuster(userData.profile_image_url)}
           ></Avatar>
         </div>
         <div>
-          <div className='text-2xl'>{userData.displayName}</div>
+          <div className='text-2xl'>{params.user}</div>
           <div>{userData.bio}</div>
           <div className='text-xs'>Born on {userData.birthday}</div>
         </div>
       </div>
       <div className='space-y-2'>
-        {posts.map(
-          (
-            post: { postText: string; createdAt: number; userId: string },
-            index: number
-          ) => (
-            <div key={index}>
-              <Post userData={userData} postContent={post}></Post>
-            </div>
-          )
-        )}
+        {posts.map((post, index) => (
+          <div key={index}>
+            <Post
+              post={post}
+              userData={{
+                display_name: params.user,
+                profile_image_url: imageCacheBuster(userData.profile_image_url),
+              }}
+            ></Post>
+          </div>
+        ))}
       </div>
     </div>
   );

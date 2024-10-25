@@ -6,14 +6,14 @@ import {
 
 export const Avatar = ({
   fallBack,
-  profilePictureUrl,
+  profileImageUrl,
 }: {
   fallBack: string;
-  profilePictureUrl: string;
+  profileImageUrl: string;
 }) => {
   return (
     <AvatarShadCn>
-      <AvatarImage src={profilePictureUrl}></AvatarImage>
+      <AvatarImage src={profileImageUrl}></AvatarImage>
       <AvatarFallback>{fallBack}</AvatarFallback>
     </AvatarShadCn>
   );
