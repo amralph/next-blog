@@ -1,9 +1,9 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import Link from 'next/link';
 import { PostForm } from './PostForm';
 import { createClientWithUserSession } from '@/lib/supabase/server';
 import { Post } from '@/components/post/Post';
 import { imageCacheBuster } from '@/lib/utils/imageCacheBuster';
+import { ClientPosts } from './ClientPosts';
+import { pageSize } from '@/lib/utils/constants';
 
 const DiscoverPage = async () => {
   const supabase = await createClientWithUserSession();
@@ -21,7 +21,8 @@ const DiscoverPage = async () => {
       .select(
         'content, created_at, image_url, users (display_name, profile_image_url)'
       )
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .range(0, pageSize - 1);
 
     if (data) {
       posts = data;
@@ -48,9 +49,7 @@ const DiscoverPage = async () => {
               ></Post>
             </div>
           ))}
-        </div>
-        <div>
-          {/* client side component specifically for loading tweets in the client*/}
+          <ClientPosts pageSize={pageSize} />
         </div>
       </div>
     </div>

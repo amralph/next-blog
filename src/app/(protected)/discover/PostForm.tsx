@@ -36,6 +36,7 @@ export const PostForm = () => {
           className='bg-white'
           value={postValue}
           onChange={(e) => setPostValue(e.target.value)}
+          placeholder={`What's happening?`}
         />
         <Button type='submit'>Post</Button>
       </div>

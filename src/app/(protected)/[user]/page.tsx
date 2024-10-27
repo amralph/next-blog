@@ -4,6 +4,8 @@ import { Avatar } from '@/components/avatar/Avatar';
 import { Post } from '@/components/post/Post';
 import { imageCacheBuster } from '@/lib/utils/imageCacheBuster';
 import { createClientWithUserSession } from '@/lib/supabase/server';
+import { pageSize } from '@/lib/utils/constants';
+import { ClientPosts } from './ClientPosts';
 
 const UserPage = async ({ params }: { params: { user: string } }) => {
   const userSession = await getSession();
@@ -17,24 +19,34 @@ const UserPage = async ({ params }: { params: { user: string } }) => {
     const supabase = await createClientWithUserSession();
 
     if (supabase) {
-      // get user by displayName
-      const { data, error } = await supabase
-        .from('users')
-        .select(
-          'bio, birthday, profile_image_url, posts (content, created_at, image_url) '
-        )
-        .eq('display_name', params.user)
-        .order('created_at', { referencedTable: 'posts', ascending: false })
-        .single();
+      const [supaUserResponse, supaPostsResponse] = await Promise.all([
+        supabase
+          .from('users')
+          .select('bio, birthday, profile_image_url')
+          .eq('display_name', params.user)
+          .single(),
 
-      if (data) {
-        posts = data.posts;
+        supabase
+          .from('posts')
+          .select(
+            'content, created_at, image_url, users (display_name, profile_image_url)'
+          )
+          .order('created_at', { ascending: false })
+          .range(0, pageSize - 1),
+      ]);
 
+      if (supaPostsResponse.data) {
+        posts = supaPostsResponse.data;
+      }
+
+      if (supaUserResponse.data) {
         userData = {
-          bio: data.bio,
-          birthday: data.birthday,
-          profile_image_url: data.profile_image_url,
+          bio: supaUserResponse.data.bio,
+          birthday: supaUserResponse.data.birthday,
+          profile_image_url: supaUserResponse.data.profile_image_url,
         };
+      } else {
+        throw new Error('User not found');
       }
     }
   }
@@ -65,6 +77,11 @@ const UserPage = async ({ params }: { params: { user: string } }) => {
             ></Post>
           </div>
         ))}
+        <ClientPosts
+          displayName={params.user}
+          profileImageUrl={userData.profile_image_url}
+          pageSize={pageSize}
+        />
       </div>
     </div>
   );
